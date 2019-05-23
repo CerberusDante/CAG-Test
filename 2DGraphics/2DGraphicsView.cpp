@@ -15,7 +15,9 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
-
+#include <math.h>
+#define PI 3.1415926
+#define Round(d) int(floor(d+0.5))
 
 // CMy2DGraphicsView
 
@@ -221,6 +223,52 @@ void CMy2DGraphicsView::OnDraw(CDC* /*pDC*/)
 		pOldPen = pDC->SelectObject(&penBlack);
 		pDC->Arc(rect, Twelve, Three);
 		pDC->SelectObject(pOldPen);
+	}
+
+	//绘制扇形函数
+	{
+		CBitmap NewBitmap;
+		NewBitmap.LoadBitmap(IDB_INSTITUTE);
+		CBrush NewBrush, *pOldBrush;
+		NewBrush.CreatePatternBrush(&NewBitmap);
+		pOldBrush = pDC->SelectObject(&NewBrush);
+		CPen *pOldPen;
+		pOldPen = (CPen*)pDC->SelectStockObject(NULL_PEN);
+		CPoint ld, rt, sp, ep;
+		ld = CPoint(-400, -600), rt = CPoint(400, 200);//外接矩形的左下角点ld、右下角点rt
+		sp = CPoint(400, 0), ep = CPoint(-400, 0);		//椭圆弧的起点sp和终点ep
+		pDC->Pie(CRect(ld, rt), sp, ep);
+		pDC->SelectObject(pOldBrush);
+		NewBitmap.DeleteObject();
+		ld = CPoint(-80, -280), rt = CPoint(80, -120);
+		sp = CPoint(400, 0), ep = CPoint(-400, 0);
+		pDC->Pie(CRect(ld, rt), sp, ep);				//使用默认画刷填充
+		pDC->SelectObject(pOldPen);
+	}
+
+	//绘制多边形函数
+	{
+		CPen penBlue(PS_SOLID, 5, RGB(0, 0, 255));
+		CPen *pOldPen = pDC->SelectObject(&penBlue);
+		CBrush brushRed(RGB(255, 0, 0));
+		CBrush *pOldBrush = pDC->SelectObject(&brushRed);
+		pDC->SetPolyFillMode(WINDING);
+		int r = 200;
+		CPoint p[5];
+		double Beta = 2 * PI / 5;
+		double Alpha = PI / 10;
+		for (int i = 0; i < 5; i++)
+		{
+			p[i].x = Round(r*cos(i*Beta + Alpha));//计算正五边形顶点坐标
+			p[i].y = Round(r*sin(i*Beta + Alpha));
+		}
+		CPoint v[5];							//定义五角星顶点数组
+		v[0] = p[0]; v[1] = p[2];
+		v[2] = p[4]; v[3] = p[1];
+		v[4] = p[3];							//转储顶点
+		pDC->Polygon(v, 5);						//绘制五角星
+		pDC->SelectObject(pOldPen);				//恢复画笔
+		pDC->SelectObject(pOldBrush);			//恢复画刷
 	}
 }
 
