@@ -377,7 +377,7 @@ void CMy2DGraphicsView::OnDraw(CDC* /*pDC*/)
 	}*/
 
 	//双缓冲机制
-	{
+	/*{
 		CRect rect;											//定义矩形
 		GetClientRect(&rect);								//获得客户去矩形的大小
 		pDC->SetMapMode(MM_ANISOTROPIC);					//自定义坐标系映射模式
@@ -406,7 +406,47 @@ void CMy2DGraphicsView::OnDraw(CDC* /*pDC*/)
 		pDC->BitBlt(rect.left, rect.top, rect.Width(), rect.Height(),
 			&memDC, -rect.Width() / 2, -rect.Height() / 2, SRCCOPY);
 		memDC.SelectObject(pOldBitmap);
+	}*/
+
+	//使用同心椭圆和同心圆绘制图形
+	{
+		//绘制外部黑色椭圆
+		CPoint ld, rt;
+		ld = CPoint(-200, -150), rt = CPoint(200, 150);
+		CBrush NewBrush, *pOldBrush;
+		NewBrush.CreateSolidBrush(RGB(0, 0, 0));
+		pOldBrush = pDC->SelectObject(&NewBrush);
+		pDC->Ellipse(CRect(ld, rt));
+		pDC->SelectObject(pOldBrush);
+		NewBrush.DeleteObject();
+
+		//绘制外部白色圆
+
+		ld = CPoint(-147, -147), rt = CPoint(147, 147);
+		NewBrush.CreateSolidBrush(RGB(255, 255, 255));
+		pOldBrush = pDC->SelectObject(&NewBrush);
+		pDC->Ellipse(CRect(ld, rt));
+		pDC->SelectObject(pOldBrush);
+		NewBrush.DeleteObject();
+
+		//绘制内部黑色椭圆
+
+		ld = CPoint(-140, -90), rt = CPoint(140, 90);
+		NewBrush.CreateSolidBrush(RGB(0, 0, 0));
+		pOldBrush = pDC->SelectObject(&NewBrush);
+		pDC->Ellipse(CRect(ld, rt));
+		pDC->SelectObject(pOldBrush);
+		NewBrush.DeleteObject();
+
+		//绘制内部白色圆
+		ld = CPoint(-88, -88), rt = CPoint(88, 88);
+		NewBrush.CreateSolidBrush(RGB(255, 255, 255));
+		pOldBrush = pDC->SelectObject(&NewBrush);
+		pDC->Ellipse(CRect(ld, rt));
+		pDC->SelectObject(pOldBrush);
+		NewBrush.DeleteObject();
 	}
+
 }
 
 
